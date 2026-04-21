@@ -6,7 +6,8 @@ export async function getDashboardStats() {
 }
 
 export async function getAllReports(filters = {}) {
-  const response = await api.get('/reports', { params: filters })
+  const params = Object.fromEntries(Object.entries(filters).filter(([, value]) => String(value ?? '').trim() !== ''))
+  const response = await api.get('/reports', { params })
   return response.data
 }
 

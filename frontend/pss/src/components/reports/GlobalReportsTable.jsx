@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, Clock, Edit2, ExternalLink, Trash2 } from 'lucide-react'
+import { AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, ClipboardList, Clock, Edit2, ExternalLink, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { REPORT_TYPE_COLORS } from '../../constants'
 import EmptyState from '../ui/EmptyState'
