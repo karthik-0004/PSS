@@ -1,5 +1,6 @@
 import { CheckCircle2, X, XCircle } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { createReport, updateReport } from '../../api/reports'
 import ReportForm from './ReportForm'
 
@@ -96,61 +97,64 @@ function ReportModal({ isOpen, onClose, onSuccess, patientId, report }) {
 
   const isEditMode = Boolean(report)
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-50 overflow-y-auto">
       <button
         type="button"
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="fixed inset-0 bg-slate-950/30 backdrop-blur-md"
         aria-label="Close modal"
       />
 
-      <div
-        className={`animate-scaleIn relative w-full max-w-2xl rounded-2xl bg-surface p-6 shadow-dropdown transition-all duration-200 ${
-          isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-        }`}
-      >
-        {showToast ? (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-success bg-success-light px-3 py-2 text-sm font-medium text-success">
-            <CheckCircle2 className="h-4 w-4" />
-            Report saved successfully
-          </div>
-        ) : null}
+      <div className="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+        <div
+          className={`animate-scaleIn relative w-full max-w-2xl rounded-2xl border border-white/50 bg-surface p-6 shadow-dropdown transition-all duration-200 max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-h-[calc(100vh-3rem)] ${
+            isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+          }`}
+        >
+          {showToast ? (
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-success bg-success-light px-3 py-2 text-sm font-medium text-success">
+              <CheckCircle2 className="h-4 w-4" />
+              Report saved successfully
+            </div>
+          ) : null}
 
-        {errorMessage ? (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-danger bg-danger-light px-3 py-2 text-sm font-medium text-danger">
-            <XCircle className="h-4 w-4" />
-            {errorMessage}
-          </div>
-        ) : null}
+          {errorMessage ? (
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-danger bg-danger-light px-3 py-2 text-sm font-medium text-danger">
+              <XCircle className="h-4 w-4" />
+              {errorMessage}
+            </div>
+          ) : null}
 
-        <div className="mb-5 flex items-start justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-text-primary">{isEditMode ? 'Edit Lab Report' : 'Add Lab Report'}</h3>
-            <p className="text-sm text-text-muted">
-              {isEditMode ? 'Update the report details below' : 'Upload a new lab report for this patient'}
-            </p>
+          <div className="mb-5 flex items-start justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-text-primary">{isEditMode ? 'Edit Lab Report' : 'Add Lab Report'}</h3>
+              <p className="text-sm text-text-muted">
+                {isEditMode ? 'Update the report details below' : 'Upload a new lab report for this patient'}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="transition-default rounded-lg p-2 text-text-muted hover:bg-surface-tertiary hover:text-text-primary"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="transition-default rounded-lg p-2 text-text-muted hover:bg-surface-tertiary hover:text-text-primary"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <ReportForm
+            initialValues={initialValues}
+            onSubmit={handleSubmit}
+            onCancel={onClose}
+            isLoading={isLoading}
+            submitLabel={isEditMode ? 'Save Changes' : 'Save Report'}
+            loadingLabel="Saving..."
+          />
         </div>
-
-        <ReportForm
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          onCancel={onClose}
-          isLoading={isLoading}
-          submitLabel={isEditMode ? 'Save Changes' : 'Save Report'}
-          loadingLabel="Saving..."
-        />
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
